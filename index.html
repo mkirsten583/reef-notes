@@ -515,7 +515,12 @@ async function handleRedirect(){
   if(!p.has("code")&&!p.has("error")) return false;
   const saved=JSON.parse(sessionStorage.getItem("reefNotes.pkce")||"null");
   history.replaceState(null,"",location.pathname);
-  if(p.has("error")){ setStatus("Sign-in cancelled","err"); return false; }
+  if(p.has("error")){
+    const code=p.get("error"), desc=(p.get("error_description")||"").replace(/\+/g," ");
+    setStatus("Sign-in failed: "+code,"err");
+    setTimeout(()=>alert("Microsoft sign-in returned an error:\n\n"+code+"\n\n"+desc+"\n\nRedirect URI used:\n"+redirectUri()+"\n\nClient ID:\n"+sync.clientId+"\n\nTenant: "+sync.tenant),300);
+    return false;
+  }
   if(!saved||saved.state!==p.get("state")){ setStatus("Sign-in state mismatch","err"); return false; }
   try{
     await tokenRequest({grant_type:"authorization_code",code:p.get("code"),redirect_uri:redirectUri(),code_verifier:saved.verifier});

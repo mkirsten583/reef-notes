@@ -167,8 +167,14 @@ function loadData(){
 }
 function loadSync(){
   const DEFAULT_CLIENT_ID = "05f5e283-efdd-4187-9b1d-cf5b686acfd7";
-  const def = {clientId:DEFAULT_CLIENT_ID, tenant:"common", folder:"Browser Tools/Reef Notes", file:"reef-notes-data.json", token:null, lastSync:0};
-  try{ const s=Object.assign(def, JSON.parse(localStorage.getItem(LS_SYNC))||{}); if(!s.clientId) s.clientId=DEFAULT_CLIENT_ID; return s; }catch(e){ return def; }
+  const def = {clientId:DEFAULT_CLIENT_ID, tenant:"consumers", tenantV:2, folder:"Browser Tools/Reef Notes", file:"reef-notes-data.json", token:null, lastSync:0};
+  try{
+    const stored=JSON.parse(localStorage.getItem(LS_SYNC))||{};
+    const s=Object.assign(def, stored);
+    if(!s.clientId) s.clientId=DEFAULT_CLIENT_ID;
+    if(stored.tenantV!==2){ s.tenant="consumers"; s.tenantV=2; s.token=null; }  /* app is personal-accounts-only: 'common' is rejected */
+    return s;
+  }catch(e){ return def; }
 }
 let data = loadData();
 let sync = loadSync();

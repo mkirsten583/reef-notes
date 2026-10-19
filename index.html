@@ -167,12 +167,13 @@ function loadData(){
 }
 function loadSync(){
   const DEFAULT_CLIENT_ID = "05f5e283-efdd-4187-9b1d-cf5b686acfd7";
-  const def = {clientId:DEFAULT_CLIENT_ID, tenant:"consumers", tenantV:2, folder:"Browser Tools/Reef Notes", file:"reef-notes-data.json", token:null, lastSync:0};
+  const def = {clientId:DEFAULT_CLIENT_ID, tenant:"consumers", tenantV:2, folderV:1, folder:"marc.kirsten/Browser Tools/Reef Notes", file:"reef-notes-data.json", token:null, lastSync:0};
   try{
     const stored=JSON.parse(localStorage.getItem(LS_SYNC))||{};
     const s=Object.assign(def, stored);
     if(!s.clientId) s.clientId=DEFAULT_CLIENT_ID;
     if(stored.tenantV!==2){ s.tenant="consumers"; s.tenantV=2; s.token=null; }  /* app is personal-accounts-only: 'common' is rejected */
+    if(stored.folderV!==1){ s.folder="marc.kirsten/Browser Tools/Reef Notes"; s.folderV=1; }  /* OneDrive folder is under marc.kirsten */
     return s;
   }catch(e){ return def; }
 }
@@ -610,7 +611,7 @@ document.addEventListener("change",ev=>{
 });
 function readSyncFields(persist){
   const v=id=>{const e=$("#"+id); return e?e.value.trim():null;};
-  if(v("s_client")!==null){ sync.clientId=v("s_client"); sync.tenant=v("s_tenant")||"common"; sync.folder=v("s_folder")||"Browser Tools/Reef Notes"; sync.file=v("s_file")||"reef-notes-data.json"; }
+  if(v("s_client")!==null){ sync.clientId=v("s_client"); sync.tenant=v("s_tenant")||"consumers"; sync.folder=v("s_folder")||"marc.kirsten/Browser Tools/Reef Notes"; sync.file=v("s_file")||"reef-notes-data.json"; }
   if(persist) persistSync();
 }
 $("#fab").onclick=()=>openForm();
